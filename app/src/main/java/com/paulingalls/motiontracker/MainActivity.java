@@ -58,12 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView myDeltaZTextView;
 
     private EditText myIpAddressEditText;
-    private Button myConnectButton;
     private String myIPAddress = "";
 
     private Boolean myIsConnectedFlag;
-    private TimerTask myTimerTask;
-    private Timer myTimer;
 
     private OkHttpClient myHttpClient;
 
@@ -109,15 +106,15 @@ public class MainActivity extends AppCompatActivity {
         myHttpClient = new OkHttpClient();
 
         myIsConnectedFlag = false;
-        myConnectButton = (Button) findViewById(R.id.myConnectButton);
+        Button theConnectButton = (Button) findViewById(R.id.myConnectButton);
 
-        myTimerTask = new TimerTask() {
+        TimerTask theTimerTask = new TimerTask() {
             @Override
             public void run() {
                 if (myIsConnectedFlag) {
-                    final Integer theDeltaX = Math.round( 1000f * (myCurrentXCoordinate - myLastXCoordinate));
-                    final Integer theDeltaY = Math.round( 1000f * (myCurrentYCoordinate - myLastYCoordinate));
-                    final Integer theDeltaZ = Math.round( 1000f * (myCurrentZCoordinate - myLastZCoordinate));
+                    final Integer theDeltaX = Math.round(100f * (myCurrentXCoordinate - myLastXCoordinate));
+                    final Integer theDeltaY = Math.round(100f * (myCurrentYCoordinate - myLastYCoordinate));
+                    final Integer theDeltaZ = Math.round(100f * (myCurrentZCoordinate - myLastZCoordinate));
 
                     myLastXCoordinate = myCurrentXCoordinate;
                     myLastYCoordinate = myCurrentYCoordinate;
@@ -140,11 +137,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        myTimer = new Timer("PositionPollTimer");
-        myTimer.schedule(myTimerTask, 400, 200);
+
+        Timer theTimer = new Timer("PositionPollTimer");
+        theTimer.schedule(theTimerTask, 500, 200);
 
 
-        myConnectButton.setOnClickListener(new View.OnClickListener() {
+        theConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 myIPAddress = myIpAddressEditText.getText().toString();
@@ -172,27 +170,27 @@ public class MainActivity extends AppCompatActivity {
         {
             if (theDeltaX > 0)
             {
-                theUrl += "right=0,0&left=1," + Integer.valueOf(500 + theDeltaX).toString() + "&";
+                theUrl += "right=0,0&left=1,1000&";
             }
             else
             {
-                theUrl += "left=0,0&right=1," + Integer.valueOf(500 + Math.abs(theDeltaX)).toString() + "&";
+                theUrl += "left=0,0&right=1,1000&";
             }
             if (theDeltaY > 0)
             {
-                theUrl += "front=0,0&back=1," + Integer.valueOf(500 + theDeltaY).toString() + "&";
+                theUrl += "front=0,0&back=1,1000&";
             }
             else
             {
-                theUrl += "back=0,0&front=1," + Integer.valueOf(500 + Math.abs(theDeltaY)).toString() + "&";
+                theUrl += "back=0,0&front=1,1000&";
             }
             if (theDeltaZ > 0)
             {
-                theUrl += "down=0,0&up=1," + Integer.valueOf(500 + theDeltaZ).toString();
+                theUrl += "down=0,0&up=1,1000";
             }
             else
             {
-                theUrl += "up=0,0&down=1," + Integer.valueOf(500 + Math.abs(theDeltaZ)).toString();
+                theUrl += "up=0,0&down=1,1000";
             }
         }
 
@@ -343,9 +341,9 @@ public class MainActivity extends AppCompatActivity {
 
         final float translation[] = pose.getTranslationAsFloats();
 
-        myCurrentXCoordinate = new Float(translation[0]);
-        myCurrentYCoordinate = new Float(translation[1]);
-        myCurrentZCoordinate = new Float(translation[2]);
+        myCurrentXCoordinate = Float.valueOf(translation[0]);
+        myCurrentYCoordinate = Float.valueOf(translation[1]);
+        myCurrentZCoordinate = Float.valueOf(translation[2]);
     }
 
     @Override
